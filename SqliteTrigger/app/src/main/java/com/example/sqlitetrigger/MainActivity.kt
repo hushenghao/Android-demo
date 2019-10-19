@@ -7,6 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
+/**
+ * 为了演示方便，并未做线程切换，所有数据库操作均在主线程
+ */
 class MainActivity : AppCompatActivity() {
 
     private val dbHelper by lazy { DBHelper(this) }
