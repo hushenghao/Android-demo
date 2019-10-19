@@ -13,6 +13,7 @@ import android.database.sqlite.SQLiteOpenHelper
 class DBHelper(context: Context) : SQLiteOpenHelper(context, "sql_trigger.db", null, 1) {
 
     private val tableName = "db_list_table"
+    private val tableBackUpName = "db_list_backup_table"
 
     private val colId = "id"
     private val colUserId = "user_id"
@@ -42,13 +43,32 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, "sql_trigger.db", n
              *          DELETE FROM db_list_table WHERE
              *              strftime('%s','now') - strftime('%s',date) >= 30
              *          OR
-             *              (NEW.user_id=user_id AND NEW.item_id=item_id);
+             *              (user_id=NEW.user_id AND item_id=NEW.item_id);
              *      END;
              *
              * 将当前时间转换为秒数
              * strftime('%s','now')
              */
-            db.execSQL("CREATE TRIGGER auto_remove BEFORE INSERT ON $tableName BEGIN DELETE FROM $tableName WHERE strftime('%s','now') - strftime('%s',$colDate) >= 30 OR (NEW.$colUserId=$colUserId AND NEW.$colItemId=$colItemId); END;")
+            db.execSQL("CREATE TRIGGER auto_remove BEFORE INSERT ON $tableName BEGIN DELETE FROM $tableName WHERE strftime('%s','now') - strftime('%s',$colDate) >= 30 OR ($colUserId=NEW.$colUserId AND $colItemId=NEW.$colItemId); END;")
+            /**
+             * 备份数据库表
+             * CREATE TABLE db_list_backup_table (
+             *   id INTEGER PRIMARY KEY AUTOINCREMENT,
+             *   user_id TEXT NOT NULL,
+             *   item_id INTEGER NOT NULL,
+             *   date TimeStamp NOT NULL
+             * );
+             */
+            db.execSQL("CREATE TABLE $tableBackUpName ($colId INTEGER PRIMARY KEY AUTOINCREMENT,$colUserId TEXT NOT NULL,$colItemId INTEGER NOT NULL,$colDate TimeStamp NOT NULL);")
+            /**
+             * 自动备份数据库触发器
+             * CREATE TRIGGER back_up AFTER INSERT
+             * ON db_list_table
+             *   BEGIN
+             *      INSERT INTO db_list_backup_table (user_id,item_id,date) VALUES (NEW.user_id,NEW.item_id,NEW.date);
+             *   END;
+             */
+            db.execSQL("CREATE TRIGGER back_up AFTER INSERT ON $tableName BEGIN INSERT INTO $tableBackUpName ($colUserId,$colItemId,$colDate) VALUES (NEW.$colUserId,NEW.$colItemId,NEW.$colDate); END;")
             db.setTransactionSuccessful()
         } catch (e: SQLException) {
             e.printStackTrace()
