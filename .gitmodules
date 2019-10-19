@@ -1,0 +1,3 @@
+[submodule "android-SVN-Plugin"]
+	path = android-SVN-Plugin
+	url = https://github.com/hushenghao/android-SVN-Plugin.git
