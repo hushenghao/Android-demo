@@ -1,2 +1,3 @@
 # Android-demo
-Android demo
+
+* [SqliteTrigger](./SqliteTrigger/) sqlite触发器
