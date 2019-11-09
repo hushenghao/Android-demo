@@ -1,3 +1,6 @@
 [submodule "android-SVN-Plugin"]
 	path = android-SVN-Plugin
 	url = https://github.com/hushenghao/android-SVN-Plugin.git
+[submodule "TextProgressBar"]
+	path = TextProgressBar
+	url = https://github.com/hushenghao/TextProgressBar.git

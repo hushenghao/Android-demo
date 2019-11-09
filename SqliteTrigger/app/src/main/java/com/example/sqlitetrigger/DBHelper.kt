@@ -89,6 +89,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, "sql_trigger.db", n
         val values = ContentValues()
         values.put(colUserId, userId)
         values.put(colItemId, itemId)
+        values.put(colDate, "(datetime('now','localtime'))")
         val insert = db.insert(tableName, null, values)
         db.close()
         return insert
